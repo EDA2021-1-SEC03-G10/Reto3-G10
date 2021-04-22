@@ -31,7 +31,79 @@ El controlador se encarga de mediar entre la vista y el modelo.
 
 # Inicialización del Catálogo de libros
 
+def init():
+    """
+    Llama la funcion de inicializacion  del modelo.
+    """
+    # catalog es utilizado para interactuar con el modelo
+    analyzer = model.newAnalyzer()
+    return analyzer
+
+
 # Funciones para la carga de datos
+
+def loadData(analyzer, eventsfile):
+    """
+    Carga los datos de los archivos CSV en el modelo
+    """
+    eventsfile = cf.data_dir + eventsfile
+    input_file = csv.DictReader(open(eventsfile, encoding="utf-8"),
+                                delimiter=",")
+    for event in input_file:
+        model.addEvent(analyzer, event)
+    return analyzer
+
+
+
+def eventsSize (analyzer):
+  
+    return model.eventsSize(analyzer)
+
+def artistsSize (analyzer):
+
+    return model.artistsSize(analyzer)
+
+def tracksSize (analyzer):
+    
+    return model.tracksSize(analyzer)
+
+def indexHeight1(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight1(analyzer)
+
+def indexHeight2(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight2(analyzer)
+
+def minKey1(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKey1(analyzer)
+
+
+def maxKey1(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKey1(analyzer)
+
+def minKey2(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKey2(analyzer)
+
+
+def maxKey2(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKey2(analyzer)
 
 # Funciones de ordenamiento
 
