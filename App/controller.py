@@ -53,8 +53,6 @@ def loadData(analyzer, eventsfile):
         model.addEvent(analyzer, event)
     return analyzer
 
-
-
 def eventsSize (analyzer):
   
     return model.eventsSize(analyzer)
@@ -73,12 +71,6 @@ def indexHeight1(analyzer):
     """
     return model.indexHeight1(analyzer)
 
-def indexHeight2(analyzer):
-    """
-    Altura del indice (arbol)
-    """
-    return model.indexHeight2(analyzer)
-
 def minKey1(analyzer):
     """
     La menor llave del arbol
@@ -92,19 +84,28 @@ def maxKey1(analyzer):
     """
     return model.maxKey1(analyzer)
 
-def minKey2(analyzer):
-    """
-    La menor llave del arbol
-    """
-    return model.minKey2(analyzer)
+def getFirstLastEvents (analyzer):
 
-
-def maxKey2(analyzer):
-    """
-    La mayor llave del arbol
-    """
-    return model.maxKey2(analyzer)
+    return model.getFirstLastEvents (analyzer)
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+
+def characterizeReproductions(analyzer, characteristic, minval, maxval):
+
+    return model.characterizeReproductions(analyzer, characteristic, minval, maxval) 
+
+def getPartyMusic (analyzer, energyMin, energyMax, danceMin, danceMax):
+
+    return model.getPartyMusic (analyzer, energyMin, energyMax, danceMin, danceMax) 
+
+def newGenre(analyzer, genre, tempoMin, tempoMax):
+    return model.newGenre(analyzer, genre.lower().strip(), tempoMin, tempoMax)
+
+def studyGenres(analyzer, txtGenres):
+    genres = txtGenres.split(',')
+    result = []
+    for genre in genres:
+        result.append(genre.strip())
+    return model.studyGenres(analyzer, result)

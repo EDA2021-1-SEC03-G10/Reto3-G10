@@ -36,6 +36,37 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+def printEvents(analyzer):
+    events = controller.getFirstLastEvents(analyzer)    
+    
+    print('Estos son los 5 primeros y 5 últimos eventos de escucha: ')
+    for event in lt.iterator(events):
+        print('Instrumentalidad: ' + event['instrumentalness'] + 
+            ' Viveza: ' + event['liveness'] + ' Habla: ' + event['speechiness'] +
+            ' Capacidad de baile: ' + event['danceability'] +
+            ' Valencia: ' + event['valence'] + ' Sonoridad: ' + event['loudness'] +
+            ' Tempo: ' + event['tempo'] + ' Acústica: ' + event['acousticness'] + 
+            ' Energía: ' + event['energy'] + ' Modo: ' + event['mode'] +
+            ' Clave: ' + event['key'] + ' Id del artista: ' + event['artist_id'] +
+            ' Idioma del tweet: ' + event['tweet_lang'] + ' Fecha de creación del registro: ' + event['created_at'] +
+            ' Idioma: ' + event['lang'] + ' Zona Horaria: ' + event['time_zone'] +
+            ' Id del usuario: ' + event['user_id'] + ' Id: ' + event['id'])
+
+    print("\n")
+
+def printTracks(lstTracks):
+  
+    
+    print('Estos son 5 tracks aleatorios: ')
+    i = 1
+    for event in lt.iterator(lstTracks):
+        print('Track ' + str(i) + ': ' + event['track_id'] + "con energía = " + event['energy'] +
+            ' y capacidad de baile = ' + event['danceability'])
+        i += 1
+
+    print("")
+
+
 def printMenu():
     print("Bienvenido")
     print("1- Inicializar Analizador")
@@ -66,23 +97,78 @@ while True:
         print('Eventos cargados: ' + str(controller.eventsSize(cont)))
 
         print('Artistas cargados: ' + str(controller.artistsSize(cont)))
-        print('Altura del arbol: ' + str(controller.indexHeight1(cont))) 
+        print('Altura del árbol: ' + str(controller.indexHeight1(cont))) 
         print('Menor Llave: ' + str(controller.minKey1(cont)))
         print('Mayor Llave: ' + str(controller.maxKey1(cont)))
 
         print('Pistas de audio cargados: ' + str(controller.tracksSize(cont)))
-        print('Altura del arbol: ' + str(controller.indexHeight2(cont))) 
-        print('Menor Llave: ' + str(controller.minKey2(cont)))
-        print('Mayor Llave: ' + str(controller.maxKey2(cont)))
 
-    elif int(inputs[0]) == 2:
-        characteristic = input("Ingrese la característica a evaluar: ")
-        minval = input("ingrese el mínimo valor: ")
-        maxval = input("Ingrese el maximo valor: ")
-        answer = controller.firstreq(catalog, characteristic, minval, maxval)
+        printEvents(cont)
+
+
+    elif int(inputs[0]) == 3:
+        characteristic = input("Ingrese la característica a evaluar (en inglés): ")
+        minval = float(input("Ingrese el mínimo valor: "))
+        maxval = float(input("Ingrese el máximo valor: "))
+
+        answer = controller.characterizeReproductions(cont, characteristic, minval, maxval)
         print(answer)
 
+    elif int(inputs[0]) == 4:
+        energyMin = float(input( "Ingrese el Valor mínimo de la característica Energy: "))
+        energyMax = float(input( "Ingrese el Valor máximo de la característica Energy: "))
+        danceMin = float(input( "Ingrese el Valor mínimo de la característica Danceability: "))
+        danceMax = float(input( "Ingrese el Valor máximo de la característica Danceability: "))
+
+        answer = controller.getPartyMusic(cont, energyMin, energyMax, danceMin, danceMax)
+
+        print("Energy está entre " + str(energyMin) + " y " + str(energyMax))
+        print("Danceability está entre " + str(danceMin) + " y " + str(danceMax))
+        print("Total de tracks únicos en eventos: " + str(answer[0]))
+
+        printTracks(answer[1])
+
+    elif int(inputs[0]) == 5:
         pass
+    elif int(inputs[0]) == 6:
+        print("1- Ingresar un nuevo género musical")
+        print("2- Estudiar géneros musicales")
+        inputs = input('Seleccione una opción para continuar\n')
+
+        if int(inputs[0]) == 1:
+            genre = input("Ingrese el nombre único para el nuevo género musical: ")
+            tempoMin = int(input( "Valor mínimo del Tempo del nuevo género musical: "))
+            tempoMax = int(input( "Valor máximo del Tempo del nuevo género musical: "))
+
+            answer = controller.newGenre(cont, genre, tempoMin, tempoMax)
+
+            if answer:
+                print("El género se creó correctamente")
+            else:
+                print("Ya existe un género con ese nombre")
+        elif int(inputs[0]) == 2:
+            genres = input("Ingrese los nombres de los géneros, separados por coma: ")
+
+            answer = controller.studyGenres(cont, genres)
+
+            total = 0
+
+            for genre in answer:
+                total += genre['count']
+
+            print("Total de reproducciones: " + str(total))
+
+            for genre in answer:
+                print("======== " + genre['genre'].upper() + " ========")
+                print("Para " + genre['genre'] + " el tempo está entre " + str(genre['min']) + " y " + str(genre['max']) + "BPM")
+                print("Reproducciones de " + genre['genre'] + ": " + str(genre['count']))
+                print("----- Algunos artistas de " + genre['genre'] + " -----")
+
+                i = 1
+                for artist in genre['artists']:
+                    print("Artista " + str(i) + ": " + artist)
+                    i += 1
+                print("")
 
     else:
         sys.exit(0)
