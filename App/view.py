@@ -170,11 +170,14 @@ while True:
 
             for genre in answer:
                 total += genre['count']
-
-            print("Total de reproducciones: " + str(total))
+            print ("=========================================================")   
+            print ("++++++ Req No. 4  resultados... ++++++")
+            print ("Total de reproducciones: " + str(total))
+            print ("")
 
             for genre in answer:
                 
+                print ("")
                 print("======== " + genre['genre'].upper() + " ========")
                 print("Para " + genre['genre'] + " el tempo está entre " + str(genre['min']) + " y " + str(genre['max']) + "BPM")
                 print("Reproducciones de " + genre['genre'] + ": " + str(genre['count']))
@@ -186,6 +189,7 @@ while True:
                     i += 1
                 print("")
 
+            print ("=========================================================")   
     else:
         sys.exit(0)
 sys.exit(0)
