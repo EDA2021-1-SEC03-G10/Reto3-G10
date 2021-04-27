@@ -112,7 +112,13 @@ while True:
         maxval = float(input("Ingrese el máximo valor: "))
 
         answer = controller.characterizeReproductions(cont, characteristic, minval, maxval)
-        print(answer)
+
+
+        print ("===============================================================================")
+        print ("++++++ Req No. 1 resultados... ++++++")
+        print (characteristic + " está entre " + str(minval) + " y " + str(maxval))
+        print ("Total de reproducciones: " + str(answer[0]) + "  Total de artistas únicos:  " +  str(answer[1]) )
+        print ("===============================================================================")
 
     elif int(inputs[0]) == 4:
         energyMin = float(input( "Ingrese el Valor mínimo de la característica Energy: "))
@@ -122,14 +128,23 @@ while True:
 
         answer = controller.getPartyMusic(cont, energyMin, energyMax, danceMin, danceMax)
 
+        print ("=========================================================================================")
+        print ("++++++ Req No. 2 (Estudiante A: Lindsay Pinto Morato) resultados... ++++++")
+        print ("")
         print("Energy está entre " + str(energyMin) + " y " + str(energyMax))
         print("Danceability está entre " + str(danceMin) + " y " + str(danceMax))
+        print ("")
         print("Total de tracks únicos en eventos: " + str(answer[0]))
+        
 
         printTracks(answer[1])
 
+        print ("=========================================================================================")
+
     elif int(inputs[0]) == 5:
         pass
+
+
     elif int(inputs[0]) == 6:
         print("1- Ingresar un nuevo género musical")
         print("2- Estudiar géneros musicales")
@@ -159,6 +174,7 @@ while True:
             print("Total de reproducciones: " + str(total))
 
             for genre in answer:
+                
                 print("======== " + genre['genre'].upper() + " ========")
                 print("Para " + genre['genre'] + " el tempo está entre " + str(genre['min']) + " y " + str(genre['max']) + "BPM")
                 print("Reproducciones de " + genre['genre'] + ": " + str(genre['count']))
