@@ -51,11 +51,13 @@ def loadData(analyzer, eventsfile):
                                 delimiter=",")
     for event in input_file:
         model.addEvent(analyzer, event)
+
     return analyzer
 
 def eventsSize (analyzer):
   
     return model.eventsSize(analyzer)
+
 
 def artistsSize (analyzer):
 

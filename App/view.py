@@ -28,6 +28,7 @@ assert cf
 
 
 eventsfile = 'context_content_features-small.csv'
+#eventsfile2 = 'user_track_hashtag_timestamp-small.csv'
 
 """
 La vista se encarga de la interacción con el usuario
@@ -76,6 +77,7 @@ def printMenu():
     print("5- Encontrar música para estudiar")
     print("6- Estudiar los géneros musicales")
     print("7- Indicar el género musical más escuchado en el tiempo")
+    print("8- Salir")
     
 
 catalog = None
@@ -179,8 +181,8 @@ while True:
                 
                 print ("")
                 print("======== " + genre['genre'].upper() + " ========")
-                print("Para " + genre['genre'] + " el tempo está entre " + str(genre['min']) + " y " + str(genre['max']) + "BPM")
-                print("Reproducciones de " + genre['genre'] + ": " + str(genre['count']))
+                print("Para " + genre['genre'] + " el tempo está entre " + str(genre['min']) + " y " + str(genre['max']) + " BPM")
+                print("Reproducciones de " + genre['genre'] + ": " + str(genre['count']) + " con " + str(genre['unique_artists']) + " artistas diferentes") 
                 print("----- Algunos artistas de " + genre['genre'] + " -----")
 
                 i = 1

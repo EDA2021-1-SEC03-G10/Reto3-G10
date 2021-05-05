@@ -46,7 +46,8 @@ def newAnalyzer():
 
         Retorna el analizador inicializado.
     """
-    analyzer = {'events': None,
+    analyzer = {'lstevents': None,
+                'events': None,
                 'artistIndex': None,
                 'tracksIndex': None,
                 'energyIndex': None,
@@ -55,7 +56,10 @@ def newAnalyzer():
                 'genreIndex': None
                 }
 
-    analyzer['events'] = lt.newList('SINGLE_LINKED', compareEvents)
+    analyzer['lstevents'] = lt.newList('SINGLE_LINKED', compareEvents2)
+
+    analyzer['events'] = mp.newMap(numelements=63409, maptype='PROBING',
+                                        comparefunction=compareEvents) 
     analyzer['artistIndex'] = om.newMap(omaptype='RBT', comparefunction=compareArtist)
 
     analyzer['tracksIndex'] = mp.newMap(numelements=30631, maptype='PROBING',
@@ -88,14 +92,21 @@ def newAnalyzer():
 
 def addEvent(analyzer, event):
    
-    lt.addLast(analyzer['events'], event)
-    updateArtistIndex(analyzer['artistIndex'], event)
-    updateTrackIndex(analyzer['tracksIndex'], event)
-    updateCharacteristicIndex(analyzer['danceability'], 'danceability', event)
-    updateCharacteristicIndex(analyzer['energy'], 'energy', event)
-    updateCharacteristicIndex(analyzer['tempo'], 'tempo', event)
+    entry = mp.get(analyzer['events'], event["user_id"]+event["track_id"]+event["created_at"] )
+    if entry is None:
+        lt.addLast(analyzer['lstevents'], event)
+        mp.put(analyzer['events'], event["user_id"]+event["track_id"]+event["created_at"], event)
+        updateArtistIndex(analyzer['artistIndex'], event)
+        updateTrackIndex(analyzer['tracksIndex'], event)
+        updateCharacteristicIndex(analyzer['danceability'], 'danceability', event)
+        updateCharacteristicIndex(analyzer['energy'], 'energy', event)
+        updateCharacteristicIndex(analyzer['tempo'], 'tempo', event)
     
     return analyzer
+
+
+
+
 
 def updateArtistIndex(map, event):
    
@@ -148,7 +159,7 @@ def newDataEntry():
                 'danceability': None, 'valence': None, 'loudness': None, 'tempo': None, 'acousticness': None,
                  'energy': None }
     
-    entry['lstevents'] = lt.newList('SINGLE_LINKED', compareEvents)
+    entry['lstevents'] = lt.newList('SINGLE_LINKED', compareEvents2)
 
     entry['instrumentalness'] = om.newMap(omaptype='RBT',
                                        comparefunction=compareCharacteristic)
@@ -175,7 +186,7 @@ def newDataEntry2():
 
     entry = { 'lstevents': None, 'trackIndex': None}
     
-    entry['lstevents'] = lt.newList('SINGLE_LINKED', compareEvents)
+    entry['lstevents'] = lt.newList('SINGLE_LINKED', compareEvents2)
     entry['trackIndex'] = mp.newMap(numelements=307, maptype='PROBING', comparefunction=compareTracks)
 
     return entry
@@ -219,7 +230,7 @@ def newCharEntry (event):
     
     charentry = {'lstevents': None}
     
-    charentry['lstevents'] = lt.newList('SINGLELINKED', compareEvents)
+    charentry['lstevents'] = lt.newList('SINGLELINKED', compareEvents2)
     return charentry
 
 def addTrackIndex (datentry, event):
@@ -275,14 +286,14 @@ def getFirstLastEvents(analyzer):
     result = lt.newList('SINGLE_LINKED', None,"id")
 
     i = 1
-    j = lt.size(analyzer["events"])
+    j = lt.size(analyzer["lstevents"])
 
-    while i <= lt.size(analyzer["events"]):
+    while i <= lt.size(analyzer["lstevents"]):
         if i <= 5:
-            lt.addLast(result, lt.getElement(analyzer["events"],i))
+            lt.addLast(result, lt.getElement(analyzer["lstevents"],i))
 
         if (i > j-5):
-            lt.addLast(result, lt.getElement(analyzer["events"],i))
+            lt.addLast(result, lt.getElement(analyzer["lstevents"],i))
     
         i += 1
 
@@ -295,6 +306,7 @@ def characterizeReproductions(analyzer, characteristic, minval, maxval):
     for key in lt.iterator(om.keySet(analyzer['artistIndex'])):
         charMap = me.getValue(om.get(analyzer['artistIndex'],key))
         lst = om.values(charMap[characteristic], minval, maxval)
+        
         eventsArtist = 0
         for lstevent in lt.iterator(lst):
             eventsArtist += lt.size(lstevent['lstevents'])
@@ -340,36 +352,45 @@ def studyGenres(analyzer, genres):
         genreEntry = mp.get(analyzer['genreIndex'], genreName)
         genre = me.getValue(genreEntry)
 
-        lstGenre = om.values(analyzer["tempo"], genre['min'], genre['max'])
-        genreCount = 0
         artists = []
-        for lstItem in lt.iterator(lstGenre):
-            genreCount += lt.size(lstItem['lstevents'])
+        totevents = 0
+        totartists = 0
 
-            # for event in lt.iterator(lstItem['lstevents']):
-            #     if len(artists) < 10:
-            #         artists.append(event['artist_id'])
-            #     else:
-            #         break
+        for key in lt.iterator(om.keySet(analyzer['artistIndex'])):
+            charMap = me.getValue(om.get(analyzer['artistIndex'],key))
+            lst = om.values(charMap['tempo'], genre['min'], genre['max'])
+            
+            eventsArtist = 0
+            for lstevent in lt.iterator(lst):
+                eventsArtist += lt.size(lstevent['lstevents'])
+            totevents += eventsArtist
+            if eventsArtist != 0:
+                totartists += 1
 
-        for event in lt.iterator(analyzer['events']):
+        for event in lt.iterator(analyzer['lstevents']):
             if float(event['tempo']) >= genre['min'] and float(event['tempo']) <= genre['max'] and event['artist_id'] not in artists:
                 artists.append(event['artist_id'])
             if len(artists) >= 10:
                 break
 
-        result.append({'genre':genreName, 'count': genreCount, 'min':genre['min'], 'max':genre['max'], 'artists':artists})
+        result.append({'genre':genreName, 'count': totevents, 'min':genre['min'], 'max':genre['max'], 'unique_artists':totartists,'artists':artists})
     return result
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
-def compareEvents (event1,event2):
+def compareEvents2 (event1,event2):
     if event1 ["id"]== event2["id"]:
         return  0
-    elif event1 ["id"] > event2["id"]:
+    else:
         return  1
-    elif event1 ["id"] < event2["id"]:
-        return  -1
+
+def compareEvents (event1,event):
+    event2 = event["key"]
+    if event1 == event2:
+        return  0
+    
+    return  1
+    
 
 def compareArtist (artist1,artist2):
     if (artist1 == artist2):
