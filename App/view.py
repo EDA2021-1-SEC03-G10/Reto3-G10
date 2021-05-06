@@ -74,10 +74,8 @@ def printMenu():
     print("2- Cargar información en el catálogo")
     print("3- Caracterizar las reproducciones")
     print("4- Encontrar música para festejar")
-    print("5- Encontrar música para estudiar")
-    print("6- Estudiar los géneros musicales")
-    print("7- Indicar el género musical más escuchado en el tiempo")
-    print("8- Salir")
+    print("5- Estudiar los géneros musicales")
+    print("6- Salir")
     
 
 catalog = None
@@ -92,20 +90,22 @@ while True:
     if int(inputs[0]) == 1:
         print("Inicializando analizador....")
         cont = controller.init()
+        
 
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
-        controller.loadData(cont, eventsfile)
+        answer = controller.loadData(cont, eventsfile)
         print('Eventos cargados: ' + str(controller.eventsSize(cont)))
-
         print('Artistas cargados: ' + str(controller.artistsSize(cont)))
         print('Altura del árbol: ' + str(controller.indexHeight1(cont))) 
         print('Menor Llave: ' + str(controller.minKey1(cont)))
         print('Mayor Llave: ' + str(controller.maxKey1(cont)))
-
         print('Pistas de audio cargados: ' + str(controller.tracksSize(cont)))
-
+        
         printEvents(cont)
+
+        print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+              "Memoria [kB]: ", f"{answer[2]:.3f}")
 
 
     elif int(inputs[0]) == 3:
@@ -119,8 +119,11 @@ while True:
         print ("===============================================================================")
         print ("++++++ Req No. 1 resultados... ++++++")
         print (characteristic + " está entre " + str(minval) + " y " + str(maxval))
-        print ("Total de reproducciones: " + str(answer[0]) + "  Total de artistas únicos:  " +  str(answer[1]) )
+        print ("Total de reproducciones: " + str(answer[0][0]) + "  Total de artistas únicos:  " +  str(answer[0][1]) )
+        print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+              "Memoria [kB]: ", f"{answer[2]:.3f}")
         print ("===============================================================================")
+
 
     elif int(inputs[0]) == 4:
         energyMin = float(input( "Ingrese el Valor mínimo de la característica Energy: "))
@@ -136,18 +139,18 @@ while True:
         print("Energy está entre " + str(energyMin) + " y " + str(energyMax))
         print("Danceability está entre " + str(danceMin) + " y " + str(danceMax))
         print ("")
-        print("Total de tracks únicos en eventos: " + str(answer[0]))
+        print("Total de tracks únicos en eventos: " + str(answer[0][0]))
         
 
-        printTracks(answer[1])
+        printTracks(answer[0][1])
+
+        print("Tiempo [ms]: ", f"{answer[1]:.3f}", "  ||  ",
+              "Memoria [kB]: ", f"{answer[2]:.3f}")
 
         print ("=========================================================================================")
 
+
     elif int(inputs[0]) == 5:
-        pass
-
-
-    elif int(inputs[0]) == 6:
         print("1- Ingresar un nuevo género musical")
         print("2- Estudiar géneros musicales")
         inputs = input('Seleccione una opción para continuar\n')
@@ -166,7 +169,9 @@ while True:
         elif int(inputs[0]) == 2:
             genres = input("Ingrese los nombres de los géneros, separados por coma: ")
 
-            answer = controller.studyGenres(cont, genres)
+            resultado = controller.studyGenres(cont, genres)
+
+            answer = resultado[0]
 
             total = 0
 
@@ -190,7 +195,7 @@ while True:
                     print("Artista " + str(i) + ": " + artist)
                     i += 1
                 print("")
-
+            print("Tiempo [ms]: ", f"{resultado[1]:.3f}", "  ||  ", "Memoria [kB]: ", f"{resultado[2]:.3f}")
             print ("=========================================================")   
     else:
         sys.exit(0)
