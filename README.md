@@ -1,4 +1,5 @@
-Req.2: Lindsay Vanessa Pinto Morato Código: 202023139 correo: l.pintom@uniandes.edu.co Req.3: Maicol Yojan Antonio Rincon código: 202027329 correo: m.antonio@uniandes.edu.co
+Req.2: Lindsay Vanessa Pinto Morato Código: 202023139 correo: l.pintom@uniandes.edu.co 
+Autorización del profesor para no hacer el requerimiento 5 dado que se realizó sola el trabajo por retiro de compañero
 
 #ISIS1225 - Librerias de soporte
 
